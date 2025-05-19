@@ -118,9 +118,10 @@ Copying config 3863cfc5e6 done   |
 Writing manifest to image destination
 
 oc patch deployment kratix-platform-controller-manager \
->   -n kratix-platform-system \
->   --type='json' \
->   -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value": "docker.io/syntasso/kratix-platform@sha256:6499bf5961e0670fe823e16cd106a2ada5d8fb1d2f4e2c3924e6d33ad318096e"}]'
+  -n kratix-platform-system \
+  --type='json' \
+  -p='[{"op": "replace", "path": "/spec/template/spec/containers/0/image", "value": "docker.io/syntasso/kratix-platform@sha256:6499bf5961e0670fe823e16cd106a2ada5d8fb1d2f4e2c3924e6d33ad318096e"}]'
+
 deployment.apps/kratix-platform-controller-manager patched
 
 oc get pods -n kratix-platform-system
