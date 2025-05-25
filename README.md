@@ -49,6 +49,11 @@ deployment.apps/cert-manager-webhook created
 mutatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook created
 validatingwebhookconfiguration.admissionregistration.k8s.io/cert-manager-webhook created
 
+oc get pods -n cert-manager
+NAME                                       READY   STATUS    RESTARTS   AGE
+cert-manager-86d8bf849b-78whj              1/1     Running   0          3m39s
+cert-manager-cainjector-66886db7db-zjtc8   1/1     Running   0          3m39s
+cert-manager-webhook-86775f7cf6-xbblw      1/1     Running   0          3m39s
 
 oc apply --filename https://github.com/syntasso/kratix/releases/latest/download/kratix.yaml                                      
 namespace/kratix-platform-system created
