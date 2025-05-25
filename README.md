@@ -143,11 +143,54 @@ You will need two openshift clusters - independent ones.
 1 worker - we call openshift-worker.modernhackers.com
 
 Apply the following services on the platform openshift:
+
 apply -f git-secret.yaml
 secret/git-credentials created
 
+validate:
+oc get secret git-credentials -n kratix-platform-system
+NAME              TYPE                       DATA   AGE
+git-credentials   kubernetes.io/basic-auth   2      3m39s
+
 oc apply -f git-state-store.yaml
 gitstatestore.platform.kratix.io/my-git-store created
+
+
+validate:
+
+oc describe gitstatestore my-git-store -n kratix-platform-system
+Name:         my-git-store
+Namespace:    
+Labels:       <none>
+Annotations:  <none>
+API Version:  platform.kratix.io/v1alpha1
+Kind:         GitStateStore
+Metadata:
+  Creation Timestamp:  2025-05-25T14:25:02Z
+  Generation:          1
+  Resource Version:    25771
+  UID:                 851aaef8-589e-4323-b256-e7e5950bd7bc
+Spec:
+  Auth Method:  basicAuth
+  Branch:       main
+  Git Author:
+    Name:  kratix
+  Secret Ref:
+    Name:  git-credentials
+  URL:     https://github.com/mazsola2k/kratix.git
+Status:
+  Conditions:
+    Last Transition Time:  2025-05-25T14:25:02Z
+    Message:               Error initialising writer: secret "git-credentials" not found in namespace "default"
+    Reason:                ErrorInitialisingWriter
+    Status:                False
+    Type:                  Ready
+  Status:                  NotReady
+Events:
+  Type     Reason    Age    From                     Message
+  ----     ------    ----   ----                     -------
+  Warning  NotReady  4m14s  GitStateStoreController  GitStateStore "my-git-store" is not ready: Error initialising writer: secret "git-credentials" not found in namespace "default"
+
 
 oc apply -f destination.yaml
 destination.platform.kratix.io/openshift-worker created
