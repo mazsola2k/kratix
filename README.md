@@ -83,6 +83,11 @@ issuer.cert-manager.io/kratix-platform-selfsigned-issuer created
 mutatingwebhookconfiguration.admissionregistration.k8s.io/kratix-platform-mutating-webhook-configuration created
 validatingwebhookconfiguration.admissionregistration.k8s.io/kratix-platform-validating-webhook-configuration create
 
+In case Kratix installed properly:
+
+oc get pods --namespace kratix-platform-system
+NAME                                                  READY   STATUS    RESTARTS   AGE
+kratix-platform-controller-manager-8576fdbc85-44rks   1/1     Running   0          25s
 
 In case Kratix Container Image not pulled:
 
