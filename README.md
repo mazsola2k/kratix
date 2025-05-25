@@ -137,3 +137,18 @@ deployment.apps/kratix-platform-controller-manager patched
 oc get pods -n kratix-platform-system
 NAME                                                  READY   STATUS    RESTARTS   AGE
 kratix-platform-controller-manager-7777b59d97-dzkdw   1/1     Running   0          13s
+
+You will need two openshift clusters - independent ones. 
+1 platform  - we call openshift.modernhackers.com
+1 worker - we call openshift-worker.modernhackers.com
+
+Apply the following services on the platform openshift:
+apply -f git-secret.yaml
+secret/git-credentials created
+
+oc apply -f git-state-store.yaml
+gitstatestore.platform.kratix.io/my-git-store created
+
+oc apply -f destination.yaml
+destination.platform.kratix.io/openshift-worker created
+
