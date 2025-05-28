@@ -102,6 +102,7 @@ syntasso.docker.scarf.sh/syntasso/kratix-platform@sha256:6499bf5961e0670fe823e16
 !!!!The image pull is failing due to the use of syntasso.docker.scarf.sh, which does not always resolve or behave correctly in OpenShift clusters.
 !!!!!!!!
 
+ssh core@openshift-platform@modernhackers.com
 podman pull docker.io/syntasso/kratix-platform@sha256:6499bf5961e0670fe823e16cd106a2ada5d8fb1d2f4e2c3924e6d33ad318096e
 Trying to pull docker.io/syntasso/kratix-platform@sha256:6499bf5961e0670fe823e16cd106a2ada5d8fb1d2f4e2c3924e6d33ad318096e...
 Getting image source signatures
@@ -144,7 +145,7 @@ You will need two openshift clusters - independent ones.
 
 Apply the following services on the platform openshift:
 
-apply -f git-secret.yaml
+oc apply -f git-secret.yaml
 secret/git-credentials created
 
 validate:
