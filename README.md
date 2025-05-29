@@ -196,3 +196,36 @@ Events:
 oc apply -f destination.yaml
 destination.platform.kratix.io/openshift-worker created
 
+oc describe Destination openshift-worker -n kratix-platform-system                            
+Name:         openshift-worker
+Namespace:    
+Labels:       environment=dev
+Annotations:  <none>
+API Version:  platform.kratix.io/v1alpha1
+Kind:         Destination
+Metadata:
+  Creation Timestamp:  2025-05-29T21:42:21Z
+  Generation:          1
+  Resource Version:    245534
+  UID:                 821214b3-7adf-41d8-b7e6-fa9c868671ca
+Spec:
+  Cleanup:  none
+  Filepath:
+    Mode:  nestedByMetadata
+  Init Workloads:
+    Enabled:  true
+  Path:       openshift-worker
+  State Store Ref:
+    Kind:  GitStateStore
+    Name:  my-git-store
+Status:
+  Conditions:
+    Last Transition Time:  2025-05-29T21:42:29Z
+    Message:               Test documents written to State Store
+    Reason:                TestDocumentsWritten
+    Status:                True
+    Type:                  Ready
+Events:
+  Type    Reason            Age   From                   Message
+  ----    ------            ----  ----                   -------
+Normal  DestinationReady  57s   DestinationController  Destination "openshift-worker" is ready
