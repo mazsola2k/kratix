@@ -270,3 +270,54 @@ deployment.apps/source-controller created
 networkpolicy.networking.k8s.io/allow-egress created
 networkpolicy.networking.k8s.io/allow-scraping created
 networkpolicy.networking.k8s.io/allow-webhooks created
+
+Pls check if helm is running:
+
+oc get pods --namespace flux-system
+NAME                                    READY   STATUS    RESTARTS   AGE
+helm-controller-86d54c748d-92jxt        1/1     Running   0          5m53s
+kustomize-controller-5cb99ff54f-wrmsl   1/1     Running   0          5m53s
+
+Install git secrets on the worker:
+
+oc apply -f worker-git-secret.yaml
+secret/git-credentials created
+
+Validate:
+
+oc get secret git-credentials -n flux-system
+NAME              TYPE                       DATA   AGE
+git-credentials   kubernetes.io/basic-auth   2      2m35s
+
+Install git repository on the worker:
+
+ oc apply -f worker-gitrepository.yaml
+gitrepository.source.toolkit.fluxcd.io/kratix-workload created
+
+Validate:
+
+oc -n flux-system get gitrepository kratix-workload -o yaml
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"source.toolkit.fluxcd.io/v1","kind":"GitRepository","metadata":{"annotations":{},"name":"kratix-workload","namespace":"flux-system"},"spec":{"interval":"1m","ref":{"branch":"main"},"secretRef":{"name":"git-credentials","namespace":"flux-system"},"url":"https://github.com/mazsola2k/kratix.git"}}
+  creationTimestamp: "2025-05-30T15:02:52Z"
+  generation: 1
+  name: kratix-workload
+  namespace: flux-system
+  resourceVersion: "205448"
+  uid: 9e3f2df2-f300-4d15-aacb-55beaeb69bcd
+spec:
+  interval: 1m
+  ref:
+    branch: main
+  secretRef:
+    name: git-credentials
+  timeout: 60s
+  url: https://github.com/mazsola2k/kratix.git
+status:
+  observedGeneration: -1
+
+
