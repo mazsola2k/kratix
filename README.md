@@ -510,3 +510,28 @@ oc -n flux-system patch kustomization kratix-workload --type=merge -p '{"spec":{
 Howto Test - Push changes to git:
 oc -n flux-system annotate kustomization/kratix-workload fluxcd.io/reconcileAt="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
 kustomization.kustomize.toolkit.fluxcd.io/kratix-workload annotate
+
+Install a sample prmoise - Jenkins - issue from the kratix-platform:
+export KRATIX_MARKETPLACE_REPO="https://raw.githubusercontent.com/syntasso/kratix-marketplace/main" 
+
+oc apply  --filename "${KRATIX_MARKETPLACE_REPO}/jenkins/promise.yaml"
+promise.platform.kratix.io/jenkins created
+
+oc get crds jenkins.marketplace.kratix.io
+NAME                            CREATED AT
+jenkins.marketplace.kratix.io   2025-05-30T16:46:54Z
+
+Validate
+oc get pods --watch
+NAME                               READY   STATUS    RESTARTS      AGE
+jenkins-operator-b975597c8-tx68f   1/1     Running   6 (58s ago)   99m
+
+Request a resource through the kratix platform:
+oc apply --filename "${KRATIX_MARKETPLACE_REPO}/jenkins/resource-request.yaml"
+jenkins.marketplace.kratix.io/example created
+
+oc get jenkins.marketplace.kratix.io
+NAME      STATUS
+example   Resource requested
+
+
