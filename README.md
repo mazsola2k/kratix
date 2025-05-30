@@ -558,3 +558,5 @@ Handling connection for 8080
 You can get the actual jenkins username and password for the login with the below commands:
 oc get secret jenkins-operator-credentials-dev-example  -o 'jsonpath={.data.user}' | base64 -d
 oc get secret jenkins-operator-credentials-dev-example  -o 'jsonpath={.data.password}' | base64 -d  
+
+connect to: http://localhost:8080/
