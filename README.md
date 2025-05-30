@@ -320,4 +320,188 @@ spec:
 status:
   observedGeneration: -1
 
+As the observedGEneration: -1, need to Validate further:
+
+oc -n flux-system get all
+Warning: apps.openshift.io/v1 DeploymentConfig is deprecated in v4.14+, unavailable in v4.10000+
+NAME                                        READY   STATUS    RESTARTS   AGE
+pod/helm-controller-86d54c748d-4wtmk        1/1     Running   0          56s
+pod/kustomize-controller-5cb99ff54f-lv8rm   1/1     Running   0          56s
+
+NAME                              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+service/notification-controller   ClusterIP   172.30.70.210    <none>        80/TCP    57s
+service/source-controller         ClusterIP   172.30.222.11    <none>        80/TCP    56s
+service/webhook-receiver          ClusterIP   172.30.242.127   <none>        80/TCP    56s
+
+NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/helm-controller               1/1     1            1           56s
+deployment.apps/image-automation-controller   0/1     0            0           56s
+deployment.apps/image-reflector-controller    0/1     0            0           56s
+deployment.apps/kustomize-controller          1/1     1            1           56s
+deployment.apps/notification-controller       0/1     0            0           56s
+deployment.apps/source-controller             0/1     0            0           56s
+
+NAME                                                    DESIRED   CURRENT   READY   AGE
+replicaset.apps/helm-controller-86d54c748d              1         1         1       56s
+replicaset.apps/image-automation-controller-66b4b689b   1         0         0       56s
+replicaset.apps/image-reflector-controller-787bc48c9d   1         0         0       56s
+replicaset.apps/kustomize-controller-5cb99ff54f         1         1         1       56s
+replicaset.apps/notification-controller-6b679c6fcf      1         0         0       56s
+replicaset.apps/source-controller-84bd99dd95            1         0         0       56s
+
+
+Apply a patch for source-controller issues:
+
+oc adm policy add-scc-to-user anyuid -z source-controller -n flux-system
+oc adm policy add-scc-to-user anyuid -z image-automation-controller -n flux-system
+oc adm policy add-scc-to-user anyuid -z image-reflector-controller -n flux-system
+oc adm policy add-scc-to-user anyuid -z notification-controller -n flux-system
+
+oc -n flux-system patch deployment source-controller --type=merge --patch '{
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "container.seccomp.security.alpha.kubernetes.io/manager": null
+        }
+      },
+      "spec": {
+        "securityContext": {
+          "fsGroup": null
+        }
+      }
+    }
+  }
+}'
+
+
+oc -n flux-system patch deployment image-automation-controller --type=merge -p='
+spec:
+  template:
+    metadata:
+      annotations:
+        container.seccomp.security.alpha.kubernetes.io/manager: null
+    spec:
+      securityContext:
+        fsGroup: null
+'
+
+oc -n flux-system patch deployment image-reflector-controller --type=merge -p='
+spec:
+  template:
+    metadata:
+      annotations:
+        container.seccomp.security.alpha.kubernetes.io/manager: null
+    spec:
+      securityContext:
+        fsGroup: null
+'
+
+oc -n flux-system patch deployment notification-controller --type=merge -p='
+spec:
+  template:
+    metadata:
+      annotations:
+        container.seccomp.security.alpha.kubernetes.io/manager: null
+    spec:
+      securityContext:
+        fsGroup: null
+'
+oc -n flux-system rollout restart deployment/source-controller
+oc -n flux-system rollout restart deployment image-automation-controller
+oc -n flux-system rollout restart deployment image-reflector-controller
+oc -n flux-system rollout restart deployment notification-controller
+
+Validate:
+
+oc -n flux-system get all
+Warning: apps.openshift.io/v1 DeploymentConfig is deprecated in v4.14+, unavailable in v4.10000+
+NAME                                               READY   STATUS    RESTARTS   AGE
+pod/helm-controller-86d54c748d-4wtmk               1/1     Running   0          33m
+pod/image-automation-controller-57c64df47b-txpvw   1/1     Running   0          71s
+pod/image-reflector-controller-76bd6fb789-cl2pz    1/1     Running   0          67s
+pod/kustomize-controller-5cb99ff54f-lv8rm          1/1     Running   0          33m
+pod/notification-controller-864b498bcc-v7djw       1/1     Running   0          66s
+pod/source-controller-7d9c69c58f-hrxql             1/1     Running   0          10m
+
+NAME                              TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)   AGE
+service/notification-controller   ClusterIP   172.30.70.210    <none>        80/TCP    33m
+service/source-controller         ClusterIP   172.30.222.11    <none>        80/TCP    33m
+service/webhook-receiver          ClusterIP   172.30.242.127   <none>        80/TCP    33m
+
+NAME                                          READY   UP-TO-DATE   AVAILABLE   AGE
+deployment.apps/helm-controller               1/1     1            1           33m
+deployment.apps/image-automation-controller   1/1     1            1           33m
+deployment.apps/image-reflector-controller    1/1     1            1           33m
+deployment.apps/kustomize-controller          1/1     1            1           33m
+deployment.apps/notification-controller       1/1     1            1           33m
+deployment.apps/source-controller             1/1     1            1           33m
+
+NAME                                                     DESIRED   CURRENT   READY   AGE
+replicaset.apps/helm-controller-86d54c748d               1         1         1       33m
+replicaset.apps/image-automation-controller-57c64df47b   1         1         1       71s
+replicaset.apps/image-automation-controller-66b4b689b    0         0         0       33m
+replicaset.apps/image-automation-controller-895946785    0         0         0       4m7s
+replicaset.apps/image-reflector-controller-76bd6fb789    1         1         1       67s
+replicaset.apps/image-reflector-controller-787bc48c9d    0         0         0       33m
+replicaset.apps/image-reflector-controller-867cbb9d87    0         0         0       3m31s
+replicaset.apps/kustomize-controller-5cb99ff54f          1         1         1       33m
+replicaset.apps/notification-controller-6b679c6fcf       0         0         0       33m
+replicaset.apps/notification-controller-864b498bcc       1         1         1       66s
+replicaset.apps/notification-controller-f475469bd        0         0         0       3m15s
+replicaset.apps/source-controller-59b79d76d9             0         0         0       11m
+replicaset.apps/source-controller-7d9c69c58f             1         1         1       10m
+replicaset.apps/source-controller-84bd99dd95             0         0         0       33m
+replicaset.apps/source-controller-94c7f6b74              0         0         0       16m
+
+You will need to re-add the  worker-gitrepository yaml and worker-git-secrey.yaml
+
+After:
+
+oc -n flux-system get gitrepository kratix-workload -o yaml
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  annotations:
+    kubectl.kubernetes.io/last-applied-configuration: |
+      {"apiVersion":"source.toolkit.fluxcd.io/v1","kind":"GitRepository","metadata":{"annotations":{},"name":"kratix-workload","namespace":"flux-system"},"spec":{"interval":"1m","ref":{"branch":"main"},"secretRef":{"name":"git-credentials","namespace":"flux-system"},"url":"https://github.com/mazsola2k/kratix.git"}}
+  creationTimestamp: "2025-05-30T15:57:30Z"
+  finalizers:
+  - finalizers.fluxcd.io
+  generation: 1
+  name: kratix-workload
+  namespace: flux-system
+  resourceVersion: "216528"
+  uid: 2c6e20d2-ae88-4f62-80f3-aae40c5d7eab
+spec:
+  interval: 1m
+  ref:
+    branch: main
+  secretRef:
+    name: git-credentials
+  timeout: 60s
+  url: https://github.com/mazsola2k/kratix.git
+status:
+  artifact:
+    digest: sha256:67c409bc3ff7a8f0bffffcafa3a89874edb66e192a79549a59e66cc4a764184f
+    lastUpdateTime: "2025-05-30T15:57:33Z"
+    path: gitrepository/flux-system/kratix-workload/9bd461d8e060fced248ec19403fd653ec8f8a5bf.tar.gz
+    revision: main@sha1:9bd461d8e060fced248ec19403fd653ec8f8a5bf
+    size: 4587
+    url: http://source-controller.flux-system.svc.cluster.local./gitrepository/flux-system/kratix-workload/9bd461d8e060fced248ec19403fd653ec8f8a5bf.tar.gz
+  conditions:
+  - lastTransitionTime: "2025-05-30T15:57:33Z"
+    message: stored artifact for revision 'main@sha1:9bd461d8e060fced248ec19403fd653ec8f8a5bf'
+    observedGeneration: 1
+    reason: Succeeded
+    status: "True"
+    type: Ready
+  - lastTransitionTime: "2025-05-30T15:57:33Z"
+    message: stored artifact for revision 'main@sha1:9bd461d8e060fced248ec19403fd653ec8f8a5bf'
+    observedGeneration: 1
+    reason: Succeeded
+    status: "True"
+    type: ArtifactInStorage
+  observedGeneration: 1
+
 
