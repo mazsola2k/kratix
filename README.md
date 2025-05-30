@@ -504,4 +504,9 @@ status:
     type: ArtifactInStorage
   observedGeneration: 1
 
+To reconcile without the flux CLI - Patch:
+oc -n flux-system patch kustomization kratix-workload --type=merge -p '{"spec":{"force":true}}'
 
+Howto Test - Push changes to git:
+oc -n flux-system annotate kustomization/kratix-workload fluxcd.io/reconcileAt="$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+kustomization.kustomize.toolkit.fluxcd.io/kratix-workload annotate
