@@ -534,4 +534,27 @@ oc get jenkins.marketplace.kratix.io
 NAME      STATUS
 example   Resource requested
 
+It takes some time for the kratix dev example resource to be up from creating state to running:
 
+oc get pods --watch
+NAME                               READY   STATUS    RESTARTS        AGE
+jenkins-operator-b975597c8-tx68f   1/1     Running   6 (3m44s ago)   101m
+ ^Hjenkins-dev-example                0/1     Pending   0               0s
+jenkins-dev-example                0/1     Pending   0               0s
+jenkins-dev-example                0/1     Pending   0               0s
+jenkins-dev-example                0/1     ContainerCreating   0               0s
+jenkins-dev-example                0/1     ContainerCreating   0               0s
+jenkins-dev-example                0/1     ContainerCreating   0               6s
+jenkins-dev-example                0/1     Running             0               74s
+jenkins-dev-example                1/1     Running             0               2m41s
+
+Run the below command - preferable from Windows Desktop or Linux Desktop with GUI - because you opening a connection between your openshift client and server directly:
+oc port-forward jenkins-dev-example 8080:8080
+Forwarding from 127.0.0.1:8080 -> 8080
+Forwarding from [::1]:8080 -> 8080
+Handling connection for 8080
+Handling connection for 8080
+
+You can get the actual jenkins username and password for the login with the below commands:
+oc get secret jenkins-operator-credentials-dev-example  -o 'jsonpath={.data.user}' | base64 -d
+oc get secret jenkins-operator-credentials-dev-example  -o 'jsonpath={.data.password}' | base64 -d  
