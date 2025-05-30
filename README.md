@@ -192,7 +192,6 @@ Events:
   ----     ------    ----   ----                     -------
   Warning  NotReady  4m14s  GitStateStoreController  GitStateStore "my-git-store" is not ready: Error initialising writer: secret "git-credentials" not found in namespace "default"
 
-
 oc apply -f destination.yaml
 destination.platform.kratix.io/openshift-worker created
 
@@ -229,3 +228,45 @@ Events:
   Type    Reason            Age   From                   Message
   ----    ------            ----  ----                   -------
 Normal  DestinationReady  57s   DestinationController  Destination "openshift-worker" is ready
+
+on the worker platform continue:
+
+oc apply -f https://github.com/fluxcd/flux2/releases/latest/download/install.yaml
+namespace/flux-system created
+resourcequota/critical-pods created
+customresourcedefinition.apiextensions.k8s.io/alerts.notification.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/buckets.source.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/gitrepositories.source.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/helmcharts.source.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/helmreleases.helm.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/helmrepositories.source.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/imagepolicies.image.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/imagerepositories.image.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/imageupdateautomations.image.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/kustomizations.kustomize.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/ocirepositories.source.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/providers.notification.toolkit.fluxcd.io created
+customresourcedefinition.apiextensions.k8s.io/receivers.notification.toolkit.fluxcd.io created
+serviceaccount/helm-controller created
+serviceaccount/image-automation-controller created
+serviceaccount/image-reflector-controller created
+serviceaccount/kustomize-controller created
+serviceaccount/notification-controller created
+serviceaccount/source-controller created
+clusterrole.rbac.authorization.k8s.io/crd-controller created
+clusterrole.rbac.authorization.k8s.io/flux-edit created
+clusterrole.rbac.authorization.k8s.io/flux-view created
+clusterrolebinding.rbac.authorization.k8s.io/cluster-reconciler created
+clusterrolebinding.rbac.authorization.k8s.io/crd-controller created
+service/notification-controller created
+service/source-controller created
+service/webhook-receiver created
+deployment.apps/helm-controller created
+deployment.apps/image-automation-controller created
+deployment.apps/image-reflector-controller created
+deployment.apps/kustomize-controller created
+deployment.apps/notification-controller created
+deployment.apps/source-controller created
+networkpolicy.networking.k8s.io/allow-egress created
+networkpolicy.networking.k8s.io/allow-scraping created
+networkpolicy.networking.k8s.io/allow-webhooks created
