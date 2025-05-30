@@ -1,0 +1,13 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: kratix-workload
+  namespace: flux-system
+spec:
+  interval: 1m
+  url: https://github.com/mazsola2k/kratix.git
+  ref:
+    branch: main
+  secretRef:
+    name: git-credentials  # Create this secret in flux-system namespace
+    namespace: flux-system

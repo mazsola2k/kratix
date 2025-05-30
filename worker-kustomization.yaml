@@ -1,0 +1,13 @@
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: kratix-workload
+  namespace: flux-system
+spec:
+  interval: 1m
+  path: ./openshift-worker
+  prune: true
+  sourceRef:
+    kind: GitRepository
+    name: kratix-workload
+  targetNamespace: default  # Or the namespace you want to apply resources into

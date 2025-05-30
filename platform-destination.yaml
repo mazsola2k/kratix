@@ -1,0 +1,11 @@
+apiVersion: platform.kratix.io/v1alpha1
+kind: Destination
+metadata:
+  name: openshift-worker
+  labels:
+    environment: dev
+spec:
+  path: openshift-worker
+  stateStoreRef:
+    name: my-git-store
+    kind: GitStateStore
