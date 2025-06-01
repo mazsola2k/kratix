@@ -1,1 +1,1 @@
-This file tests that Kratix can write to this state store. Last write time: 2025-06-01 16:57:22.705984643 +0000 UTC m=+20.207686407
+This file tests that Kratix can write to this state store. Last write time: 2025-06-01 16:57:30.420925303 +0000 UTC m=+27.922627077
